@@ -1,0 +1,76 @@
+<app-sidebar></app-sidebar>
+<div style="margin: 0px 300px;">
+    <h1>Tabla Notas</h1>
+    <p-button (click)="showDialog()" label="Crear"></p-button>
+    <p-table [value]="notas" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Alumno</th>
+                <th>Curso</th>
+                <th>nota1</th>
+                <th>nota2</th>
+                <th>nota3</th>
+                <th>promedio</th>
+                <th>Acción</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-nota let-i="rowIndex">
+            <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ nota.alumno ? nota.alumno.nombres + ' ' + nota.alumno.apellidos : 'Sin categoría' }}</td>
+                <td>{{ nota.curso ? nota.curso.nombre : 'Sin categoría' }}</td>
+                <td>{{ nota.nota_1 }}</td>
+                <td>{{ nota.nota_2 }}</td>
+                <td>{{ nota.nota_3 }}</td>
+                <td>{{ nota.promedio }}</td>
+                <td>
+                    <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded" (click)="selectNota(nota)"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteNota(nota.id)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+    <h1 class="modal-title fs-5" *ngIf="!isUpdate">Agregar Nota</h1>
+    <h1 class="modal-title fs-5" *ngIf="isUpdate">Actualizar Nota</h1>
+    <form [formGroup]="formNota">
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="alumnos" class="form-label font-semibold w-6rem">Alumno:</label>
+            <select id="alumnos" class="form-select" formControlName="idAlumno">
+                <option value="" disabled selected>Seleccione una opción</option>
+                <option *ngFor="let alumno of alumnos" [value]="alumno.id">{{ alumno.nombres }} {{ alumno.apellidos }}</option>
+            </select>
+        </div>
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="curso" class="form-label font-semibold w-6rem">Curso:</label>
+            <select id="curso" class="form-select" formControlName="idCurso">
+                <option value="" disabled selected>Seleccione una opción</option>
+                <option *ngFor="let curso of cursos" [value]="curso.id">{{ curso.nombre }}</option>
+            </select>
+        </div>
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="nota_1" class="font-semibold w-6rem">Nota 1:</label>
+            <input pInputText id="nota_1" class="flex-auto" formControlName="nota_1" (input)="calcularPromedio()" />
+        </div>
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="nota_2" class="font-semibold w-6rem">Nota 2:</label>
+            <input pInputText id="nota_2" class="flex-auto" formControlName="nota_2" (input)="calcularPromedio()" />
+        </div>
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="nota_3" class="font-semibold w-6rem">Nota 3:</label>
+            <input pInputText id="nota_3" class="flex-auto" formControlName="nota_3" (input)="calcularPromedio()" />
+        </div>
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="promedio" class="font-semibold w-6rem">Promedio:</label>
+            <input pInputText id="promedio" class="flex-auto" formControlName="promedio" readonly />
+        </div>
+    </form>
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Cancelar" severity="secondary" (onClick)="visible = false" />
+        <p-button label="Agregar" (click)="addNota()" *ngIf="!isUpdate" />
+        <p-button label="Actualizar" (click)="editNota()" *ngIf="isUpdate" />
+    </div>
+</p-dialog>
